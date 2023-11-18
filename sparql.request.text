@@ -1,0 +1,49 @@
+1. First requests for listing all comparison in ORKG
+
+PREFIX orkgr: <http://orkg.org/orkg/resource/>
+PREFIX orkgc: <http://orkg.org/orkg/class/>
+PREFIX orkgp: <http://orkg.org/orkg/predicate/>
+
+SELECT ?comparison ?comparison_title ?food
+WHERE {
+  ?comparison rdf:type orkgc:Comparison ;
+              rdfs:label ?comparison_title .
+#               orkgp:label ?food .
+  FILTER (str(?comparison_title) = "Comparison of Food Composition Tables/Databases")
+}
+
+LIMIT 5
+
+2. select all ressource associated to a specific predicate
+PREFIX orkgp: <http://orkg.org/orkg/predicate/>
+PREFIX orkgr: <http://orkg.org/orkg/resource/>
+
+SELECT  ?ressource 
+WHERE {
+   ?comparison orkgp:P62002 ?ressource .
+#   ?related_resource rdfs:label ?name .
+}
+
+3. select Object and object name associate to a property
+PREFIX orkgp: <http://orkg.org/orkg/predicate/>
+PREFIX orkgr: <http://orkg.org/orkg/resource/>
+
+SELECT DISTINCT ?object_name
+WHERE {
+  ?subject orkgp:P62002 ?object .
+  ?object rdfs:label ?object_name .
+}
+
+SELECT DISTINCT ?food_component
+WHERE {
+  ?subject orkgp:P62002 ?object .
+  ?object rdfs:description ?food_component .
+}
+
+
+3. select all instance of Countri Object
+SELECT ?id_country ?country
+WHERE {
+  ?id_country rdf:type <http://orkg.org/orkg/class/C20015> .
+  ?id_country rdfs:label ?country
+}
