@@ -47,3 +47,35 @@ Open the project in you terminal and then run this command <br>
    
     3. Detail Screen for a given food group that contain the name and the description of this food groupd with a source link to get it in ORKG plateform.
 
+
+## Build Apk
+
+1. Android device
+   
+```bash
+eas build -p android --profile preview
+```
+
+2. IOS device
+   
+   * Navigate in eas.json file and replace the code by this:
+  
+    ```bash
+    {
+    "build": {
+        "preview": {
+        "ios": {
+            "simulator": true
+        }
+        },
+        "production": {}
+    }
+    }
+
+    ```
+
+    * Run command to build apk
+  
+    ```bash
+    eas build -p ios --profile preview
+    ```
