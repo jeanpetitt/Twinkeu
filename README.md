@@ -15,22 +15,21 @@
 
 ## Launch application in Local
 
-    Open the project in you terminal and then run this command
+Open the project in you terminal and then run this command <br>
 
-    * Install dependancies of the application
-    
-    ```bash
-    npm install 
-    
-    ```
+* Install dependancies of the application.
+  
+   ```
+    npm install
+   ```
 
-    * Launch the server
-    
+* Launch the server
+
     ```bash
     npm start
     ```
 
-    * Open expo go install in your android device and Scan the QRcode 
+* Open expo go install in your android device and Scan the QRcode 
   
 ## Navigation inside application
 
