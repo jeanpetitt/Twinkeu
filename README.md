@@ -1,6 +1,6 @@
 # Twinkeu 
 
-<img src='assets/logo_home.jpg' height=50 width=50/>
+<img src='assets/logo_home.jpg' height=70 width=70/>
 
 ## Description
 
