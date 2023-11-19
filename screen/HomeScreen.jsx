@@ -1,157 +1,159 @@
-import { View, Text, SafeAreaView, ScrollView, StyleSheet, TextInput, Pressable, Image } from 'react-native'
-import React, { useState, useEffect, useLayoutEffect } from 'react'
-import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import Baner from '../components/Baner'
-import FoodTypes from '../components/FoodTypes'
-import QuickFood from '../components/QuickFood'
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Image } from 'react-native'
+import React, { useState, useLayoutEffect } from 'react'
+import { Feather } from '@expo/vector-icons'
+
 
 const HomeScreen = ({ navigation }) => {
 
     // customize header home screen
+    const [criteria, setCriteria] = useState([]);
+    const [newCriterion, setNewCriterion] = useState('');
+
+    const addCriterion = () => {
+        if (newCriterion.trim() !== '') {
+            setCriteria([...criteria, { text: newCriterion, editMode: false }]);
+            setNewCriterion('');
+        }
+    };
+
+    const deleteCriterion = (index) => {
+        const updatedCriteria = [...criteria];
+        updatedCriteria.splice(index, 1);
+        setCriteria(updatedCriteria);
+    };
+
+    const toggleEditMode = (index) => {
+        const updatedCriteria = [...criteria];
+        updatedCriteria[index].editMode = !updatedCriteria[index].editMode;
+        setCriteria(updatedCriteria);
+    };
+
+    const updateCriterion = (index, newText) => {
+        const updatedCriteria = [...criteria];
+        updatedCriteria[index].text = newText;
+        setCriteria(updatedCriteria);
+    };
+
+    const renderCriterion = ({ item, index }) => {
+        return (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+                {item.editMode ? (
+                    <TextInput
+                        style={{
+                            flex: 1,
+                            marginRight: 10,
+                            padding: 5,
+                            borderColor: 'gray',
+                            borderWidth: 1
+                        }}
+                        value={item.text}
+                        onChangeText={(text) => updateCriterion(index, text)}
+                        autoFocus
+                    />
+                ) : (
+                    <TouchableOpacity style={{
+                        flex: 1,
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        borderRightWidth: 0,
+                        padding: 10,
+                        marginLeft: 10
+                    }}
+                        onPress={
+                            () => toggleEditMode(index)}
+                    >
+                        <Text>{item.text}</Text>
+                    </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                    style={{
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        borderRightWidth: 0,
+                        borderLeftWidth: 0,
+                        padding: 10,
+                        marginRight: 10
+                    }}
+                    onPress={() => deleteCriterion(index)}
+                >
+                    <Feather name="trash" size={20} color="red" style={{ marginRight: 10 }} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        padding: 10,
+                        marginLeft: -20,
+                        borderLeftWidth: 0,
+                        marginRight: 20
+                    }}
+                    onPress={() => toggleEditMode(index)}
+                >
+                    <Feather name="edit" size={20} color="blue" />
+                </TouchableOpacity>
+            </View>
+        );
+    };
+
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerTile: 'Twinkeu',
+            title: 'Twinkeu',
             headerLeft: () => (
-                <Image source={{ uri: "../asstes/icon.png" }} />
-            ),
-            // headerRight: ({ color }) => (
-            //     <Pressable style={{ flexDirection: 'column', marginTop: 10 }}>
-            //         <MaterialCommunityIcons
-            //             name='person-circle-outline'
-            //             color={color}
-            //             style={styles.headerHomeRight}
-            //         />
-            //         <Text style={{ textAlign: 'center', fontSize: 10, marginLeft: -50 }}>Login</Text>
-            //     </Pressable>
+                <View style={{
+                    shadowColor: '#000',
+                    // shadowOffset: { width: 2, height: 2 },
+                    shadowOpacity: 0.5,
+                    shadowRadius: 4,
+                    backgroundColor: 'white'
+                }}>
 
-            // )
+                    <Image source={require("../assets/home.png")} style={{
+                        height: 55,
+                        width: 70
+                    }} />
+                </View>
+            )
 
         })
     });
 
-    const [filterData, setfilterData] = useState([])
-    const [masterData, setmasterData] = useState([])
-    const [search, setSearch] = useState('')
-
-    useEffect(() => {
-        fetchPost()
-
-        return () => {
-
-        }
-    }, [])
-
-    const fetchPost = () => {
-
-
-        const apiURL = 'https://jsonplaceholder.typicode.com/posts';
-
-        fetch(apiURL)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                setfilterData(responseJson);
-                setmasterData(responseJson)
-            }).catch((error) => {
-                console.log(error);
-            })
-    }
-
-    const searchFilter = (text) => {
-        if (text) {
-            const newData = masterData.filter((item) => {
-                const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
-
-                const textData = text.toUpperCase();
-                return itemData.indexOf(textData) > -1;
-            });
-            setfilterData(newData);
-            setSearch(text)
-        } else {
-            setfilterData(masterData);
-            setSearch(text)
-        }
-    }
-
-    const ItemView = ({ item }) => {
-        return (
-            <Text style={styles.itemStyle}>
-                {item.id}{'. '}{item.title.toUpperCase()}
-            </Text>
-        )
-    }
-
-    const ItemSeparatorView = () => {
-        return (
-            <View
-                style={{ height: 0.5, width: '100%', backgroundColor: '#c8c8c8' }}
-            />
-        )
-    }
-
+    const [selectedValue, setSelectedValue] = useState('');
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            {/* Search Bar */}
-            <View style={styles.containerSearch}>
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <Picker
+                selectedValue={selectedValue}
+                onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+            >
+                <Picker.Item label="Continent" value="Continent" />
+                <Picker.Item label="Country" value="Country" />
+                <Picker.Item label="Country" value="Country" />
+            </Picker>
+            <Text>Selected value: {selectedValue}</Text>
+            <FlatList
+                data={criteria}
+                renderItem={renderCriterion}
+                keyExtractor={(item, index) => index.toString()}
+            />
+            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
                 <TextInput
-                    style={styles.textInput}
-                    placeholder='Search Food'
+                    style={{ padding: 5, borderColor: 'gray', borderWidth: 1 }}
+                    value={newCriterion}
+                    onChangeText={setNewCriterion}
                 />
-                <AntDesign name='search1' color='red' size={24} />
+                <TouchableOpacity
+                    style={{
+                        backgroundColor: 'blue',
+                        opacity: 0.8,
+                        marginBottom: '50%'
+                    }}
+                    onPress={addCriterion}
+                >
+                    <Text>+</Text>
+                </TouchableOpacity>
             </View>
 
-            {/* Image Baner Component */}
-            <Baner />
-
-            {/* Food Item */}
-            {/* <FoodTypes /> */}
-
-            {/* Quick Food Component*/}
-            <QuickFood navigation={navigation} />
-
-            {/* filter Button */}
-            {/* <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
-                <Pressable style={{
-                    marginHorizontal: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    borderWidth: 1,
-                    borderColor: '#D0D0D0',
-                    padding: 10,
-                    borderRadius: 20,
-                    justifyContent: 'center',
-                    width: 90
-                }}>
-                    <Text style={{ marginRight: 6 }}>Filter</Text>
-                    <Ionicons name='filter' size={24} color="black" />
-                </Pressable>
-
-                <Pressable style={{
-                    marginHorizontal: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    borderWidth: 1,
-                    borderColor: '#D0D0D0',
-                    padding: 10,
-                    borderRadius: 20,
-                    justifyContent: 'center',
-                }}>
-                    <Text>Sort By Rating</Text>
-                </Pressable>
-                <Pressable style={{
-                    marginHorizontal: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    borderWidth: 1,
-                    borderColor: '#D0D0D0',
-                    padding: 10,
-                    borderRadius: 20,
-                    justifyContent: 'center'
-                }}>
-                    <Text>Sort By Price</Text>
-                </Pressable>
-            </View> */}
-        </SafeAreaView>
+        </View>
     )
 }
 

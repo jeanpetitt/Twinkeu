@@ -8,7 +8,7 @@ export default function App() {
   return (
     <NavigationContainer>
       {/* <StackScreen /> */}
-      <BottomTab />
+      <StackScreen />
     </NavigationContainer>
 
   );

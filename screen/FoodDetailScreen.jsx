@@ -1,6 +1,5 @@
 import { View, Text, Image, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native'
 import React from 'react'
-import Baner from '../components/Baner';
 
 const FoodDetailScreen = ({ route }) => {
     const { id_food, food_name } = route.params.food;
@@ -22,29 +21,11 @@ const FoodDetailScreen = ({ route }) => {
                 {/* description part */}
                 <View>
                     <Text style={styles.descriptitle}>Description</Text>
-                    <Text style={styles.descriptionBody}>Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Deleniti dolorem libero distinctio asperiores tempore consequatur,
-                        nobis cumque inventore mollitia sit recusandae soluta officiis sint neque,
-                        voluptas doloribus facilis corrupti dolores!
+                    <Text style={styles.descriptionBody}>Not yet description
                     </Text>
                 </View>
                 {/* composition */}
-                <Text style={styles.descriptitle}>Compostion</Text>
-                <View style={styles.compositionContainer}>
-                    <View style={styles.colunmNutrient}>
-                        <Text style={styles.cell}>Nutrient</Text>
-                        <Text style={styles.cell}> 1</Text>
-                        {/* <Text style={styles.cell}></Text> */}
-                    </View>
-                    <View style={styles.colunmNutrient}>
-                        <Text style={styles.cell}>
 
-                        </Text>
-                        <Text style={styles.cell}>
-
-                        </Text>
-                    </View>
-                </View>
             </View>
             {/* Source Link */}
             <View style={styles.sourceLink}>
@@ -78,7 +59,8 @@ const styles = StyleSheet.create({
     nameFood: {
         fontSize: 27,
         fontWeight: '500',
-        textAlign: 'center'
+        textAlign: 'center',
+        color: "#FF8F8F"
     },
     descriptitle: {
         fontSize: 20,

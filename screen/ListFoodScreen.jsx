@@ -1,18 +1,20 @@
-import { View, Text, SafeAreaView, StyleSheet, FlatList, TextInput, TouchableOpacity, Image } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, FlatList, TextInput, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
 import React, { useState, useEffect, useLayoutEffect } from 'react'
-import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
+import { AntDesign, Ionicons } from '@expo/vector-icons'
 import axios from "axios";
 
 
 const ListFoodScreen = ({ navigation }) => {
 
     // customize header home screen
+    const goBack = () => {
+        navigation.goBack()
+    }
 
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerShown: true,
-            headerTile: 'Food List',
+            title: 'Food Group',
             headerLeft: () => (
                 <Image source={{ uri: "../asstes/icon.png" }} />
             ),
@@ -30,7 +32,7 @@ const ListFoodScreen = ({ navigation }) => {
 
         })
     });
-
+    const [isLoading, setIsLoading] = useState(true);
     const [masterData, setMasterData] = useState([])
     const [search, setSearch] = useState('')
 
@@ -51,8 +53,14 @@ const ListFoodScreen = ({ navigation }) => {
                 const headers = { 'Accept': 'application/sparql-results+json' };
 
                 const response = await axios.get(fullUrl, { headers });
-                setFood(response.data.results.bindings);
-                setMasterData(response.data.results.bindings);
+
+                setIsLoading(true);
+
+                setTimeout(() => {
+                    setIsLoading(false);
+                    setFood(response.data.results.bindings);
+                    setMasterData(response.data.results.bindings);
+                }, 2000);
             } catch (error) {
                 console.error('An error occurred:', error);
             }
@@ -85,11 +93,11 @@ const ListFoodScreen = ({ navigation }) => {
 
     const ItemView = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => handleFoodPress(item)}>
+            <TouchableOpacity activeOpacity={0.9} onPress={() => handleFoodPress(item)}>
 
                 <View style={styles.itemStyle}>
                     {/* <Image source={{ uri: item.image }} style={{ height: 50, width: 50, borderRadius: 10 }} /> */}
-                    <Text style={{ margin: 20 }}>{item.food_name.value.toUpperCase()}</Text>
+                    <Text style={{ margin: 20, color: "#FF8F8F", textAlign: 'center' }}>{item.food_name.value.toUpperCase()}</Text>
                 </View>
             </TouchableOpacity>
         )
@@ -106,7 +114,7 @@ const ListFoodScreen = ({ navigation }) => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={styles.container}>
                 <View style={styles.containerSearch}>
                     <TextInput
@@ -114,16 +122,22 @@ const ListFoodScreen = ({ navigation }) => {
                         value={search}
                         underlineColorAndroid="transparent"
                         onChangeText={(text) => searchFilter(text)}
-                        placeholder='Search Food'
+                        placeholder='Search a food group'
                     />
                     <AntDesign name='search1' color='red' size={24} />
                 </View>
-                <FlatList
-                    data={foods}
-                    keyExtractor={(item, index) => index.toString()}
-                    ItemSeparatorComponent={ItemSeparatorView}
-                    renderItem={ItemView}
-                />
+                {isLoading ? (
+                    <ActivityIndicator size="large" color="#FF8F8F" />) :
+                    (
+                        <FlatList
+                            data={foods}
+                            keyExtractor={(item, index) => index.toString()}
+                            ItemSeparatorComponent={ItemSeparatorView}
+                            renderItem={ItemView}
+                        />
+                    )
+                }
+
             </View>
         </SafeAreaView>
     )
@@ -136,7 +150,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white'
     },
     itemStyle: {
-        padding: 10,
+        padding: 5,
         backgroundColor: '#f9c2ff',
         margin: 15,
         shadowColor: '#000',
@@ -145,7 +159,9 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 4,
         backgroundColor: 'white',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        borderRadius: 50,
+        alignItems: 'center'
     },
     textInputStyle: {
         height: 40,
@@ -163,7 +179,13 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10,
         borderColor: '#C0C0C0',
-        borderRadius: 7
+        borderRadius: 7,
+        shadowColor: '#000',
+        shadowOffset: { width: 2, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 4,
+        elevation: 4,
+        backgroundColor: 'white',
     },
     textInput: {
         fontSize: 17,
