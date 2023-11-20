@@ -1,9 +1,7 @@
-import { View, Text } from 'react-native'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import ListFoodScreen from '../screen/ListFoodScreen'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import StackScreen from './StackScreen'
 import HomeScreen from '../screen/HomeScreen'
 
 const Tab = createBottomTabNavigator()
@@ -38,10 +36,13 @@ const BottomTab = () => {
                     shadowRadius: 4,
                     elevation: 4,
                     backgroundColor: 'white',
+
+
                 },
                 headerTitleStyle: {
                     color: "#FF8F8F",
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    fontSize: 25
                 }
 
             })}

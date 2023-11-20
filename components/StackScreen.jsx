@@ -1,9 +1,8 @@
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import HomeScreen from '../screen/HomeScreen'
-import ListFoodScreen from '../screen/ListFoodScreen'
-import FoodDetailScreen from '../screen/FoodDetailScreen'
+import FoodGroupDetailScreen from '../screen/FoodGroupDetailScreen'
 import BottomTab from './BottomTab'
+import FoodDetailScreen from '../screen/FoodDetailScreen'
 
 const Stack = createNativeStackNavigator()
 
@@ -15,7 +14,8 @@ const StackScreen = () => {
             {/* <Stack.Screen name='Twinkeu' component={HomeScreen} /> */}
             < Stack.Screen name='ListFoo' component={BottomTab} options={{ headerShown: false }} />
             {/* <Stack.Screen name='ListFoodstack' component={ListFoodScreen} /> */}
-            <Stack.Screen name='Details' component={FoodDetailScreen} />
+            <Stack.Screen name='DetailsFoodGroup' options={{ title: 'Details' }} component={FoodGroupDetailScreen} />
+            <Stack.Screen name='DetailsFood' component={FoodDetailScreen} />
             <Stack.Group
                 screenOptions={({ navigation }) => ({
                     presentation: 'modal',

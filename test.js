@@ -5,10 +5,10 @@ const sparqlQuery = `
 PREFIX orkgp: <http://orkg.org/orkg/predicate/>
 PREFIX orkgr: <http://orkg.org/orkg/resource/>
 
-SELECT DISTINCT ?id_food ?food_name
+SELECT ?id_country ?country
 WHERE {
-  ?id_food rdf:type <http://orkg.org/orkg/class/C34000> .
-  ?id_food rdfs:label ?food_name
+?id_country rdf:type <http://orkg.org/orkg/class/C20015> .
+?id_country rdfs:label ?country
 }
 
 `;

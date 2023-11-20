@@ -1,8 +1,13 @@
-import { View, Text, SafeAreaView, StyleSheet, FlatList, TextInput, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import { View, Text, SafeAreaView, RefreshControl, StyleSheet, FlatList, TextInput, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 import axios from "axios";
+import fetchFoodGroup from '../server/api';
 
+//Refresh control
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
 
 const ListFoodScreen = ({ navigation }) => {
 
@@ -32,51 +37,48 @@ const ListFoodScreen = ({ navigation }) => {
 
         })
     });
+    const data = fetchFoodGroup()
     const [isLoading, setIsLoading] = useState(true);
     const [masterData, setMasterData] = useState([])
     const [search, setSearch] = useState('')
+    const [refreshing, setRefreshing] = useState(false)
+    const [key, setKey] = useState(0)
+    const mounted = useRef()
+
+
 
     const [foods, setFood] = useState([])
     useEffect(() => {
-        const fetchData = async () => {
-            const endpointUrl = 'https://orkg.org/triplestore';
-            const sparqlQuery = `
-            SELECT DISTINCT ?id_food ?food_name
-            WHERE {
-            ?id_food rdf:type <http://orkg.org/orkg/class/C34000> .
-            ?id_food rdfs:label ?food_name .
-            }
-                    `;
 
-            try {
-                const fullUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery);
-                const headers = { 'Accept': 'application/sparql-results+json' };
+        setIsLoading(true);
 
-                const response = await axios.get(fullUrl, { headers });
+        setTimeout(() => {
+            setIsLoading(false);
+            setFood(data);
+            setMasterData(data);
+            console.log(foods)
+        }, 3000);
 
-                setIsLoading(true);
 
-                setTimeout(() => {
-                    setIsLoading(false);
-                    setFood(response.data.results.bindings);
-                    setMasterData(response.data.results.bindings);
-                }, 2000);
-            } catch (error) {
-                console.error('An error occurred:', error);
-            }
-        };
         console.log(search)
-        fetchData();
     }, [])
 
+
+    //Refresh control
+    const onRefresh = useCallback(() => {
+        setRefreshing(true)
+        setKey((prevKey) => prevKey + 1)
+        wait(2000).then(() => setRefreshing(false))
+    }, [foods])
+
     const handleFoodPress = (food) => {
-        navigation.navigate('Details', { food });
+        navigation.navigate('DetailsFoodGroup', { food });
     };
 
     const searchFilter = (text) => {
         if (text) {
             const newData = masterData.filter((item) => {
-                const itemData = item.food_name.value ? item.food_name.value.toUpperCase() : ''.toUpperCase();
+                const itemData = item.label ? item.label.toUpperCase() : ''.toUpperCase();
 
                 const textData = text.toUpperCase();
                 return itemData.indexOf(textData) > -1;
@@ -97,7 +99,7 @@ const ListFoodScreen = ({ navigation }) => {
 
                 <View style={styles.itemStyle}>
                     {/* <Image source={{ uri: item.image }} style={{ height: 50, width: 50, borderRadius: 10 }} /> */}
-                    <Text style={{ margin: 20, color: "#FF8F8F", textAlign: 'center' }}>{item.food_name.value.toUpperCase()}</Text>
+                    <Text style={{ margin: 20, color: "#FF8F8F", textAlign: 'center' }}>{item.label}</Text>
                 </View>
             </TouchableOpacity>
         )
@@ -127,13 +129,20 @@ const ListFoodScreen = ({ navigation }) => {
                     <AntDesign name='search1' color='red' size={24} />
                 </View>
                 {isLoading ? (
-                    <ActivityIndicator size="large" color="#FF8F8F" />) :
+                    <ActivityIndicator size="large" color="#FF8F8F" style={{ margin: '50%' }} />) :
                     (
                         <FlatList
                             data={foods}
                             keyExtractor={(item, index) => index.toString()}
                             ItemSeparatorComponent={ItemSeparatorView}
                             renderItem={ItemView}
+                            refreshControl={
+                                <RefreshControl
+                                    color="#FF8F8F"
+                                    refreshing={refreshing}
+                                    onRefresh={onRefresh}
+                                />
+                            }
                         />
                     )
                 }

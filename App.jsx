@@ -2,14 +2,22 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import StackScreen from "./components/StackScreen";
-import BottomTab from "./components/BottomTab";
+import { StatusBar } from "react-native";
+// import BottomTab from "./components/BottomTab";
 
 export default function App() {
   return (
-    <NavigationContainer>
-      {/* <StackScreen /> */}
-      <StackScreen />
-    </NavigationContainer>
+    <>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
+      />
+      <NavigationContainer>
+        {/* <StackScreen /> */}
+        <StackScreen />
+      </NavigationContainer>
+    </>
 
   );
 }
