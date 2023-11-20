@@ -5,7 +5,7 @@ export default function fetchCountry() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchData = () => {
             const endpointUrl = 'https://orkg.org/triplestore';
             const sparqlQuery = `
                 SELECT ?id_country ?country
@@ -18,15 +18,14 @@ export default function fetchCountry() {
                 const fullUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery);
                 const headers = { 'Accept': 'application/sparql-results+json' };
 
-                const response = await axios.get(fullUrl, { headers });
+                const response = axios.get(fullUrl, { headers });
                 setData(response.data.results.bindings);
-                console.log('longueur du tablea', data.length)
+                console.log('size of country', data.length)
 
-                if (data.length == 0) {
+                if (data.length === 0) {
                     setData([
                         { 'label': 'Not country available', 'value': '1' }
                     ])
-                    console.log('succes get counties but the list is null')
                 } else {
 
                     const newDataCountry = data.map(item => (
@@ -60,6 +59,10 @@ export default function fetchCountry() {
 
         fetchData();
     }, [])
+
+    useEffect(() => {
+        console.log('size of Country', data.length);
+    }, [data]);
 
     return data
 }

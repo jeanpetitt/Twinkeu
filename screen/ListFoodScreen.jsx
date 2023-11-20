@@ -9,15 +9,72 @@ const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
-const ListFoodScreen = ({ navigation }) => {
+const ListfoodGroupcreen = ({ navigation }) => {
 
-    // customize header home screen
-    const goBack = () => {
-        navigation.goBack()
-    }
+    // const data = fetchFoodGroup()
+    const [foodGroup, setFoodGroup] = useState([])
+    const [isLoading, setIsLoading] = useState(true);
+    const [masterData, setMasterData] = useState([])
+    const [search, setSearch] = useState('')
+    const [refreshing, setRefreshing] = useState(false)
+    const [key, setKey] = useState(0)
+    const mounted = useRef()
 
 
-    useLayoutEffect(() => {
+    //  fetch food group
+    const fetchData = async () => {
+        setIsLoading(true);
+        const endpointUrl = 'https://orkg.org/triplestore';
+        const sparqlQuery = `
+          SELECT DISTINCT ?id_food ?food_name
+          WHERE {
+          ?id_food rdf:type <http://orkg.org/orkg/class/C34000> .
+          ?id_food rdfs:label ?food_name .
+          }
+          `;
+
+        try {
+            const fullUrl = endpointUrl + '?query=' + encodeURIComponent(sparqlQuery);
+            const headers = { 'Accept': 'application/sparql-results+json' };
+
+            const response = await axios.get(fullUrl, { headers });
+            data = response.data.results.bindings
+            console.log('size of foodGroup', data.length)
+            setTimeout(() => {
+                setIsLoading(false);
+                setFoodGroup(data);
+                setMasterData(data);
+                // if (data.length === 0) {
+                //     setFoodGroup([
+                //         { 'label': 'Not available food group', 'value': '1' }
+                //     ])
+                // } else {
+
+                //     const newDataCountry = foodGroup.map(item => (
+                //         {
+                //             'label': item.food_name.value,
+                //             'value': item.food_name.value,
+                //             'uri': item.id_food.value,
+                //         }
+
+                //     ))
+
+                //     setFoodGroup(newDataCountry)
+                //     console.log('success get foodGroup with list');
+                // }
+
+            }, 2000);
+
+
+
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+        console.log(search)
         navigation.setOptions({
             title: 'Food Group',
             headerLeft: () => (
@@ -36,31 +93,6 @@ const ListFoodScreen = ({ navigation }) => {
             // )
 
         })
-    });
-    const data = fetchFoodGroup()
-    const [isLoading, setIsLoading] = useState(true);
-    const [masterData, setMasterData] = useState([])
-    const [search, setSearch] = useState('')
-    const [refreshing, setRefreshing] = useState(false)
-    const [key, setKey] = useState(0)
-    const mounted = useRef()
-
-
-
-    const [foods, setFood] = useState([])
-    useEffect(() => {
-
-        setIsLoading(true);
-
-        setTimeout(() => {
-            setIsLoading(false);
-            setFood(data);
-            setMasterData(data);
-            console.log(foods)
-        }, 3000);
-
-
-        console.log(search)
     }, [])
 
 
@@ -69,7 +101,7 @@ const ListFoodScreen = ({ navigation }) => {
         setRefreshing(true)
         setKey((prevKey) => prevKey + 1)
         wait(2000).then(() => setRefreshing(false))
-    }, [foods])
+    }, [foodGroup])
 
     const handleFoodPress = (food) => {
         navigation.navigate('DetailsFoodGroup', { food });
@@ -78,16 +110,16 @@ const ListFoodScreen = ({ navigation }) => {
     const searchFilter = (text) => {
         if (text) {
             const newData = masterData.filter((item) => {
-                const itemData = item.label ? item.label.toUpperCase() : ''.toUpperCase();
+                const itemData = item.food_name.value ? item.food_name.value.toUpperCase() : ''.toUpperCase();
 
                 const textData = text.toUpperCase();
                 return itemData.indexOf(textData) > -1;
             });
-            setFood(newData);
+            setFoodGroup(newData);
             setSearch(text)
             console.log(search)
         } else {
-            setFood(masterData);
+            setFoodGroup(masterData);
             setSearch(text);
             console.log(search);
         }
@@ -99,7 +131,7 @@ const ListFoodScreen = ({ navigation }) => {
 
                 <View style={styles.itemStyle}>
                     {/* <Image source={{ uri: item.image }} style={{ height: 50, width: 50, borderRadius: 10 }} /> */}
-                    <Text style={{ margin: 20, color: "#FF8F8F", textAlign: 'center' }}>{item.label}</Text>
+                    <Text style={{ margin: 20, color: "#FF8F8F", textAlign: 'center' }}>{item.food_name.value.toUpperCase()}</Text>
                 </View>
             </TouchableOpacity>
         )
@@ -132,7 +164,7 @@ const ListFoodScreen = ({ navigation }) => {
                     <ActivityIndicator size="large" color="#FF8F8F" style={{ margin: '50%' }} />) :
                     (
                         <FlatList
-                            data={foods}
+                            data={foodGroup}
                             keyExtractor={(item, index) => index.toString()}
                             ItemSeparatorComponent={ItemSeparatorView}
                             renderItem={ItemView}
@@ -152,7 +184,7 @@ const ListFoodScreen = ({ navigation }) => {
     )
 }
 
-export default ListFoodScreen;
+export default ListfoodGroupcreen;
 
 const styles = StyleSheet.create({
     container: {

@@ -2,10 +2,10 @@ import { View, Text, Image, StyleSheet, ScrollView, Linking, TouchableOpacity } 
 import React from 'react'
 
 const FoodDetailScreen = ({ route }) => {
-    const { label, uri } = route.params.food;
+    const { id_food, food_name } = route.params.food;
 
     const handleLinkPress = () => {
-        Linking.openURL(uri);
+        Linking.openURL(id_food.value);
     };
 
     return (
@@ -17,7 +17,7 @@ const FoodDetailScreen = ({ route }) => {
             {/* Details About Food Here */}
 
             <View style={styles.containerDetail}>
-                <Text style={styles.nameFood}>{label.toUpperCase()}</Text>
+                <Text style={styles.nameFood}>{food_name.value}</Text>
                 {/* description part */}
                 <View>
                     <Text style={styles.descriptitle}>Description</Text>
@@ -32,7 +32,7 @@ const FoodDetailScreen = ({ route }) => {
                 <Text>
                     Source Link:
                     <TouchableOpacity onPress={handleLinkPress}>
-                        <Text style={{ color: 'blue', marginLeft: 10, textDecorationLine: 'underline' }}>{uri}
+                        <Text style={{ color: 'blue', marginLeft: 10, textDecorationLine: 'underline' }}>{id_food.value}
                         </Text>
                     </TouchableOpacity>
                 </Text>

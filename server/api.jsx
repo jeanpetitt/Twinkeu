@@ -30,7 +30,6 @@ export default function fetchFoodGroup() {
           setData([
             { 'label': 'Not available food group', 'value': '1' }
           ])
-          console.log('succes get foods but the lit is nul')
         } else {
 
           const newDataCountry = data.map(item => (
@@ -52,7 +51,7 @@ export default function fetchFoodGroup() {
           //   return 0;
           // });
           setData(newDataCountry)
-          console.log('success get food with list');
+          console.log('success get foods with list');
         }
 
 
@@ -63,6 +62,12 @@ export default function fetchFoodGroup() {
 
     fetchData();
   }, [])
+
+  useEffect(() => {
+    console.log('size of foods', data.length);
+
+  }, [data]);
+
 
   // console.log(data)
   return data
